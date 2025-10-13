@@ -1,0 +1,36 @@
+:root{ --ants-bg:#0b0f10; --ants-ink:#d9e0e3; --ants-ui:#0e1316; --ants-grid:#10171b; }
+html,body{height:100%;margin:0;background:var(--ants-bg);color:var(--ants-ink);font:14px/1.4 ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.ants-root{position:fixed;inset:0;background:var(--ants-bg);color:var(--ants-ink)}
+#ants-hud{position:fixed;left:0;top:0;width:100vw;height:56px;display:block;z-index:6;background:var(--ants-ui)}
+#ants-view{position:fixed;inset:0;width:100vw;height:100vh;display:block;background:var(--ants-ui)}
+#ants-overlay{position:fixed;inset:0;display:none;place-items:center;z-index:9000}
+#ants-overlay.show{display:grid}
+#ants-banner{padding:18px 24px;border-radius:12px;border:1px solid #2a3640;background:#0d1418cc;color:#e6eef3;font:600 20px/1.2 ui-sans-serif;text-align:center}
+#ants-banner small{display:block;font-weight:400;opacity:.9;margin-top:6px}
+
+.ants-pad{position:fixed;left:10px;bottom:10px;z-index:6;display:grid;grid-template-columns:36px 36px 36px;grid-template-rows:36px 36px 36px;gap:6px}
+.ants-pad button{background:#0f161a;border:1px solid #27323a;color:#e8f1f6;border-radius:8px;font:600 12px ui-sans-serif;cursor:pointer}
+.ants-pad button:hover{background:#132027}
+
+.ants-edge{position:fixed;z-index:5;pointer-events:auto}
+.ants-edge.left{left:0;top:0;bottom:0;width:14px}
+.ants-edge.right{right:0;top:0;bottom:0;width:14px}
+.ants-edge.top{top:0;left:0;right:0;height:14px}
+.ants-edge.bottom{bottom:0;left:0;right:0;height:14px}
+
+/* In-DOM modal (replaces iframe) */
+#ants-overlay .ants-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+#ants-overlay .ants-modal-box{
+  position:absolute;max-width:min(560px,92vw);max-height:min(80vh,640px);overflow:auto;
+  background:#0d1418;color:#e6eef3;border:1px solid #2a3640;border-radius:12px;padding:14px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5)
+}
+#ants-overlay .ants-grid{display:grid;gap:10px;}
+@media(min-width:640px){#ants-overlay .ants-grid.cols-2{grid-template-columns:1fr 1fr;}}
+#ants-overlay button{
+  background:#0f161a;border:1px solid #27323a;color:#e6eef3;border-radius:10px;
+  padding:12px 14px;font:600 14px ui-sans-serif;cursor:pointer;text-align:left;line-height:1.2;
+}
+#ants-overlay button:hover{background:#132027;}
+#ants-overlay .row{display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;margin-top:12px;padding-top:10px;background:linear-gradient(to top,#0d1418,transparent)}
+#ants-overlay .close{min-width:100px;text-align:center}
