@@ -175,10 +175,10 @@ add_action('admin_menu', 'my_function');
    define('ANTS_COLS', 50);  // Change from 94
    define('ANTS_ROWS', 50);  // Change from 94
    ```
-2. Edit same lines (11-12) in `ants-rts-map-editor.php`
+2. Edit same lines (lines 11-12) in `ants-rts-map-editor.php`
 
 ### Change Tile Size
-1. Edit line 16 in `ants-rts-game.php` and line 13 in `ants-rts-map-editor.php`:
+1. Edit lines 16 in `ants-rts-game.php` and lines 13 in `ants-rts-map-editor.php`:
    ```php
    define('ANTS_TILE', 32);  // Change from 64
    ```
