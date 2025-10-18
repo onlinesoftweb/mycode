@@ -8,28 +8,49 @@ Author: You
 if (!defined('ABSPATH')) exit;
 
 /* ===== Grid / Options ===== */
-if (!defined('ANTS_COLS'))            define('ANTS_COLS',94);
-if (!defined('ANTS_ROWS'))            define('ANTS_ROWS',94);
-if (!defined('ANTS_TILE'))            define('ANTS_TILE',64);
-if (!function_exists('ants_total')){  function ants_total(){ return ANTS_COLS*ANTS_ROWS; } }
+// LEARNING NOTE: These constants define the game world size
+// ANTS_COLS (94) × ANTS_ROWS (94) = 8,836 tiles total
+// Each tile is 64×64 pixels, making the world 6,016×6,016 pixels
+if (!defined('ANTS_COLS'))            define('ANTS_COLS',94);  // Number of columns in the grid
+if (!defined('ANTS_ROWS'))            define('ANTS_ROWS',94);  // Number of rows in the grid
+if (!defined('ANTS_TILE'))            define('ANTS_TILE',64);  // Size of each tile in pixels
+if (!function_exists('ants_total')){  function ants_total(){ return ANTS_COLS*ANTS_ROWS; } }  // Total tiles: 94*94 = 8,836
 
-if (!defined('ANTS_MAPS_OPTION'))     define('ANTS_MAPS_OPTION','ants_rts_maps');
-if (!defined('ANTS_CURRENT_OPTION'))  define('ANTS_CURRENT_OPTION','ants_rts_current');
-if (!defined('ANTS_LEGACY_OPTION'))   define('ANTS_LEGACY_OPTION','ants_rts_map');       // legacy single-map payload
-if (!defined('ANTS_SPRITES_OPTION'))  define('ANTS_SPRITES_OPTION','ants_rts_sprites');
-if (!defined('ANTS_VIDEOS_OPTION'))   define('ANTS_VIDEOS_OPTION','ants_rts_videos');    // intro, win, lose
-if (!defined('ANTS_SOUNDS_OPTION'))   define('ANTS_SOUNDS_OPTION','ants_rts_sounds');    // click, recruit, buildDone, heal, trap, enemy, deposit, gather, victory, defeat
+// LEARNING NOTE: WordPress stores data in the database using "options"
+// These constants are the names (keys) used to store different game data
+if (!defined('ANTS_MAPS_OPTION'))     define('ANTS_MAPS_OPTION','ants_rts_maps');        // Stores all saved maps
+if (!defined('ANTS_CURRENT_OPTION'))  define('ANTS_CURRENT_OPTION','ants_rts_current');  // Stores which map is currently active
+if (!defined('ANTS_LEGACY_OPTION'))   define('ANTS_LEGACY_OPTION','ants_rts_map');       // Legacy single-map payload (for backwards compatibility)
+if (!defined('ANTS_SPRITES_OPTION'))  define('ANTS_SPRITES_OPTION','ants_rts_sprites');  // Stores URLs for ant character images
+if (!defined('ANTS_VIDEOS_OPTION'))   define('ANTS_VIDEOS_OPTION','ants_rts_videos');    // Stores video URLs (intro, win, lose)
+if (!defined('ANTS_SOUNDS_OPTION'))   define('ANTS_SOUNDS_OPTION','ants_rts_sounds');    // Stores sound effect URLs (click, recruit, buildDone, heal, trap, enemy, deposit, gather, victory, defeat)
 
-function ants_get_maps(){ $m=get_option(ANTS_MAPS_OPTION); return is_array($m)?$m:[]; }
-function ants_get_current(){ $s=get_option(ANTS_CURRENT_OPTION); return is_string($s)?$s:''; }
+// LEARNING NOTE: Helper functions to retrieve data from WordPress database
+// get_option() is a WordPress function that retrieves stored data
+function ants_get_maps(){ 
+    $m=get_option(ANTS_MAPS_OPTION);  // Get maps from database
+    return is_array($m)?$m:[]; // Return maps array, or empty array if none exist
+}
+function ants_get_current(){ 
+    $s=get_option(ANTS_CURRENT_OPTION);  // Get current map name from database
+    return is_string($s)?$s:''; // Return map name, or empty string if none exists
+}
 
 /**
- * Sprites used by the game. Includes: roles, buildings, trap decorations.
+ * LEARNING NOTE: Sprites are the images used for game characters and buildings
+ * This function returns URLs for all sprite images needed by the game
+ * 
+ * Sprite types:
+ * - Ant roles: fighter, food, gold, builder, fire, bomber, queen, nest
+ * - Buildings: barracks, upgrade, hospital
+ * - Trap decorations: fireTile, bombTile
+ * 
  * Keys must match what ants.js expects.
  */
 function ants_get_sprites(){
-  $d=get_option(ANTS_SPRITES_OPTION);
-  if(!is_array($d)) $d=[];
+  $d=get_option(ANTS_SPRITES_OPTION);  // Get saved sprite URLs from database
+  if(!is_array($d)) $d=[];  // If nothing saved, start with empty array
+  // array_merge() combines default empty values with saved values
   return array_merge([
     'fighter'=>'','food'=>'','gold'=>'','builder'=>'','fire'=>'','bomber'=>'','queen'=>'','nest'=>'',
     'barracks'=>'','upgrade'=>'','hospital'=>'',
@@ -113,37 +134,45 @@ function ants_rts_enqueue_assets(){
 add_action('init','ants_rts_enqueue_assets');
 
 /* ===== Shortcode ===== */
+// LEARNING NOTE: Shortcodes let you insert dynamic content into WordPress pages
+// When you type [ants_game] in a page, this function runs and returns HTML
 add_shortcode('ants_game', function(){
-  wp_enqueue_style('ants-rts-css');
-  wp_enqueue_script('ants-rts-js');
+  // Load CSS and JavaScript files needed for the game
+  wp_enqueue_style('ants-rts-css');    // Load the game's CSS styles
+  wp_enqueue_script('ants-rts-js');    // Load the game's JavaScript code
 
-  // Localize map + assets
-  wp_localize_script('ants-rts-js','ANTS_BOOT',    ants_get_boot_map_payload());
-  wp_localize_script('ants-rts-js','ANT_SPRITES',  ants_get_sprites());
-  wp_localize_script('ants-rts-js','ANT_VIDEOS',   ants_get_videos());
-  wp_localize_script('ants-rts-js','ANT_SOUNDS',   ants_get_sounds());
+  // LEARNING NOTE: wp_localize_script() passes PHP data to JavaScript
+  // This is how we send map data, images, and sounds from PHP to the game code
+  wp_localize_script('ants-rts-js','ANTS_BOOT',    ants_get_boot_map_payload());  // Map data
+  wp_localize_script('ants-rts-js','ANT_SPRITES',  ants_get_sprites());            // Character images
+  wp_localize_script('ants-rts-js','ANT_VIDEOS',   ants_get_videos());             // Video URLs
+  wp_localize_script('ants-rts-js','ANT_SOUNDS',   ants_get_sounds());             // Sound effect URLs
 
+  // LEARNING NOTE: ob_start() starts output buffering - captures HTML instead of printing it
   ob_start(); ?>
+  <!-- LEARNING NOTE: This is the HTML structure for the game -->
   <div class="ants-root" id="ants-root" data-ants>
-    <canvas id="ants-hud" aria-hidden="true"></canvas>
-    <canvas id="ants-view" aria-label="Ants RTS World"></canvas>
+    <!-- Canvas elements: These are where the game graphics are drawn -->
+    <canvas id="ants-hud" aria-hidden="true"></canvas>        <!-- HUD = Heads-Up Display (UI overlay) -->
+    <canvas id="ants-view" aria-label="Ants RTS World"></canvas>  <!-- Main game world -->
 
-    <!-- Nav pad -->
+    <!-- Nav pad: 9 buttons arranged in a grid for map navigation -->
     <div class="ants-pad" id="ants-pad" aria-label="Map navigation">
       <button data-pan="up-left">↖</button><button data-pan="up">↑</button><button data-pan="up-right">↗</button>
       <button data-pan="left">←</button><button data-pan="center">•</button><button data-pan="right">→</button>
       <button data-pan="down-left">↙</button><button data-pan="down">↓</button><button data-pan="down-right">↘</button>
     </div>
 
-    <!-- Edge panners -->
+    <!-- Edge panners: Invisible areas at screen edges that pan when mouse hovers -->
     <div class="ants-edge left"  data-edge="left"></div>
     <div class="ants-edge right" data-edge="right"></div>
     <div class="ants-edge top"   data-edge="top"></div>
     <div class="ants-edge bottom"data-edge="bottom"></div>
 
-    <!-- Overlay + in-DOM modal (no iframe) -->
+    <!-- Overlay: Modal dialog for messages, menus, videos, etc. -->
     <div id="ants-overlay" role="dialog" aria-modal="true" aria-live="polite"><div id="ants-banner"></div></div>
   </div>
   <?php
-  return ob_get_clean();
+  // LEARNING NOTE: ob_get_clean() returns the captured HTML and clears the buffer
+  return ob_get_clean();  // Return HTML to WordPress (this is what displays on the page)
 });
