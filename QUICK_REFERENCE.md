@@ -17,7 +17,7 @@ A handy cheat sheet for working with the Ants RTS codebase.
 
 ## 🎮 Game Configuration
 
-### Grid Settings (Line 11-14)
+### Grid Settings (Lines 14-16)
 ```php
 define('ANTS_COLS', 94);    // Number of columns
 define('ANTS_ROWS', 94);    // Number of rows
@@ -170,29 +170,29 @@ add_action('admin_menu', 'my_function');
 ## 🔧 Common Tasks
 
 ### Change Grid Size
-1. Edit lines 11-12 in `ants-rts-game.php`:
+1. Edit lines 14-15 in `ants-rts-game.php`:
    ```php
    define('ANTS_COLS', 50);  // Change from 94
    define('ANTS_ROWS', 50);  // Change from 94
    ```
-2. Edit same lines in `ants-rts-map-editor.php`
+2. Edit same lines (11-12) in `ants-rts-map-editor.php`
 
 ### Change Tile Size
-1. Edit line 13 in both plugin files:
+1. Edit line 16 in `ants-rts-game.php` and line 13 in `ants-rts-map-editor.php`:
    ```php
    define('ANTS_TILE', 32);  // Change from 64
    ```
 
 ### Add New Sprite Type
-1. Add to `ants_get_sprites()` function (line 30+):
+1. Add to `ants_get_sprites()` function (around line 50):
    ```php
    'myNewAnt' => '',
    ```
-2. Add to editor UI (line 550+):
+2. Add to editor UI (around line 550):
    ```php
    ['myNewAnt', 'My New Ant'],
    ```
-3. Add to save function (line 268+):
+3. Add to save function (around line 268):
    ```php
    'myNewAnt' => sanitize_text_field($_POST['ants_sprite_myNewAnt']??''),
    ```

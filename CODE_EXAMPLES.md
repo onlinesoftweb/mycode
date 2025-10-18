@@ -79,7 +79,7 @@ Practical code examples to help you understand and modify the Ants RTS project.
 
 **File**: `plugins/ants-rts-game/ants-rts-game.php`
 
-**Find** (around line 126):
+**Find** (around line 152):
 ```php
 ob_start(); ?>
   <div class="ants-root" id="ants-root" data-ants>
@@ -101,7 +101,7 @@ ob_start(); ?>
 
 **File**: `plugins/ants-rts-game/ants-rts-game.php`
 
-**Add before the game HTML** (around line 126):
+**Add before the game HTML** (around line 152):
 ```php
 ob_start(); 
 $currentMap = ants_get_current();
@@ -120,7 +120,7 @@ $mapName = isset($maps[$currentMap]) ? $maps[$currentMap]['name'] : 'Default Map
 
 **File**: `plugins/ants-rts-game/ants-rts-game.php`
 
-**Add this function** (around line 25):
+**Add this function** (after the helper functions, around line 38):
 ```php
 // Count how many tiles are filled with images
 function ants_count_filled_tiles() {
@@ -552,7 +552,7 @@ document.addEventListener('mousemove', (e) => {
 ### Exercise 1: Change Grid to 50×50
 **Difficulty**: Easy
 
-1. Edit `ants-rts-game.php` lines 11-12
+1. Edit `ants-rts-game.php` lines 14-15
 2. Edit `ants-rts-map-editor.php` lines 11-12
 3. Test the changes
 
